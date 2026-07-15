@@ -3,6 +3,7 @@
 -- МЕШИ ПЕРЕВЕРНУТЫ ОСТРОЙ СТОРОНОЙ ВВЕРХ
 -- КНОПКИ + И - ДЛЯ РАЗМЕРА
 -- ОГРАНИЧЕНИЯ: ГРУДЬ 0.60 - 0.95, ЯГОДИЦЫ 0.50 - 1.00
+-- ИСПРАВЛЕНЫ РАЗМЕРЫ ЧАСТЕЙ
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -29,8 +30,8 @@ local physicsParts = {}
 local meshesAdded = false
 local torso = nil
 local connections = {}
-local boobSize = 0.4
-local assSize = 0.3
+local boobSize = 0.60
+local assSize = 0.50
 local clothingRemoved = false
 local savedClothing = {}
 local selectedGender = nil
@@ -176,7 +177,10 @@ local function updateMeshSizes()
     for _, name in ipairs({"RightBoob", "LeftBoob"}) do
         local part = char:FindFirstChild(name)
         if part then
-            part.Size = Vector3.new(1.5 * (boobSize/0.6), 1.4 * (boobSize/0.6), 1.2 * (boobSize/0.6))
+            -- Размеры для груди при 0.60 (минимальный размер)
+            local baseSize = Vector3.new(1.5, 1.4, 1.2)
+            local scaleFactor = boobSize / 0.60
+            part.Size = baseSize * scaleFactor
             local mesh = part:FindFirstChildOfClass("SpecialMesh")
             if mesh then
                 mesh.Scale = Vector3.new(boobSize, boobSize * 0.97, boobSize * 0.97)
@@ -188,7 +192,10 @@ local function updateMeshSizes()
     for _, name in ipairs({"RightAss", "LeftAss"}) do
         local part = char:FindFirstChild(name)
         if part then
-            part.Size = Vector3.new(1.4 * (assSize/1.1), 1.0 * (assSize/1.1), 0.8 * (assSize/1.1))
+            -- Размеры для ягодиц при 0.50 (минимальный размер)
+            local baseSize = Vector3.new(1.4, 1.0, 0.8)
+            local scaleFactor = assSize / 0.50
+            part.Size = baseSize * scaleFactor
             local mesh = part:FindFirstChildOfClass("SpecialMesh")
             if mesh then
                 mesh.Scale = Vector3.new(assSize, assSize * 0.82, assSize * 0.82)
@@ -246,7 +253,6 @@ end
 
 -- ============================================================
 --   ФУНКЦИЯ ДОБАВЛЕНИЯ МЕШЕЙ (ЖЕНСКИЙ R6)
---   ОСТРАЯ СТОРОНА МЕША СМОТРИТ ВВЕРХ
 -- ============================================================
 local function addMeshesFemaleR6()
     -- Удаляем старые меши
@@ -284,9 +290,7 @@ local function addMeshesFemaleR6()
     local boobPos = Vector3.new(0.55, 0.25, -0.9)
     local assPos = Vector3.new(0.45, -0.7, 0.5)
     
-    -- ============================================================
-    --   ПОВОРОТЫ ДЛЯ ГРУДИ (ОСТРАЯ СТОРОНА ВВЕРХ)
-    -- ============================================================
+    -- Повороты для груди (острая сторона вверх)
     local boobRotation = CFrame.Angles(
         math.rad(-90),
         math.rad(-15),
@@ -299,9 +303,7 @@ local function addMeshesFemaleR6()
         math.rad(0)
     )
     
-    -- ============================================================
-    --   ПОВОРОТЫ ДЛЯ ЯГОДИЦ (ОСТРАЯ СТОРОНА ВВЕРХ)
-    -- ============================================================
+    -- Повороты для ягодиц (острая сторона вверх)
     local assRotation = CFrame.Angles(
         math.rad(-90),
         math.rad(-10),
@@ -314,12 +316,24 @@ local function addMeshesFemaleR6()
         math.rad(0)
     )
     
+    -- Размеры для груди (базовый размер при 0.60)
+    local boobBaseSize = Vector3.new(1.5, 1.4, 1.2)
+    local boobScaleFactor = boobSize / 0.60
+    local boobSizeFinal = boobBaseSize * boobScaleFactor
+    local boobMeshScale = Vector3.new(boobSize, boobSize * 0.97, boobSize * 0.97)
+    
+    -- Размеры для ягодиц (базовый размер при 0.50)
+    local assBaseSize = Vector3.new(1.4, 1.0, 0.8)
+    local assScaleFactor = assSize / 0.50
+    local assSizeFinal = assBaseSize * assScaleFactor
+    local assMeshScale = Vector3.new(assSize, assSize * 0.82, assSize * 0.82)
+    
     -- ГРУДЬ ПРАВАЯ
     local rBoob = createPart("RightBoob", char, 
         torso.CFrame * CFrame.new(boobPos.X, boobPos.Y, boobPos.Z) * boobRotation,
-        Vector3.new(1.5 * (boobSize/0.6), 1.4 * (boobSize/0.6), 1.2 * (boobSize/0.6)),
+        boobSizeFinal,
         "rbxassetid://7135906486",
-        Vector3.new(boobSize, boobSize * 0.97, boobSize * 0.97),
+        boobMeshScale,
         color
     )
     table.insert(physicsParts, rBoob)
@@ -328,9 +342,9 @@ local function addMeshesFemaleR6()
     -- ГРУДЬ ЛЕВАЯ
     local lBoob = createPart("LeftBoob", char, 
         torso.CFrame * CFrame.new(-boobPos.X, boobPos.Y, boobPos.Z) * boobRotationLeft,
-        Vector3.new(1.5 * (boobSize/0.6), 1.4 * (boobSize/0.6), 1.2 * (boobSize/0.6)),
+        boobSizeFinal,
         "rbxassetid://7135906486",
-        Vector3.new(boobSize, boobSize * 0.97, boobSize * 0.97),
+        boobMeshScale,
         color
     )
     table.insert(physicsParts, lBoob)
@@ -339,9 +353,9 @@ local function addMeshesFemaleR6()
     -- ЯГОДИЦА ПРАВАЯ
     local rAss = createPart("RightAss", char, 
         torso.CFrame * CFrame.new(assPos.X, assPos.Y, assPos.Z) * assRotation,
-        Vector3.new(1.4 * (assSize/1.1), 1.0 * (assSize/1.1), 0.8 * (assSize/1.1)),
+        assSizeFinal,
         "rbxassetid://7135906486",
-        Vector3.new(assSize, assSize * 0.82, assSize * 0.82),
+        assMeshScale,
         color
     )
     table.insert(physicsParts, rAss)
@@ -350,9 +364,9 @@ local function addMeshesFemaleR6()
     -- ЯГОДИЦА ЛЕВАЯ
     local lAss = createPart("LeftAss", char, 
         torso.CFrame * CFrame.new(-assPos.X, assPos.Y, assPos.Z) * assRotationLeft,
-        Vector3.new(1.4 * (assSize/1.1), 1.0 * (assSize/1.1), 0.8 * (assSize/1.1)),
+        assSizeFinal,
         "rbxassetid://7135906486",
-        Vector3.new(assSize, assSize * 0.82, assSize * 0.82),
+        assMeshScale,
         color
     )
     table.insert(physicsParts, lAss)
@@ -592,6 +606,4 @@ local function createMainGUI()
     info.Parent = frame
     info.Size = UDim2.new(1, 0, 0, 50)
     info.Position = UDim2.new(0, 0, 0, 225)
-    info.Text = "💗 Грудь: 0.60 - 0.95\n🍑 Ягодицы: 0.50 - 1.00\n⬆️ Острая сторона мешей ВВЕРХ"
-    info.TextColor3 = Color3.new(0.8, 0.8, 0.9)
-    info.BackgroundTransparency = 
+    info.Text = "💗 Грудь: 0.60 - 0.95\n🍑 Ягодицы: 0.50 - 1.00\n⬆️ Острая сто
