@@ -88,22 +88,17 @@ function drawMinimizeButton()
     local w = minimizeButton.w
     local h = minimizeButton.h
     
-    -- Фон
     local color = guiMinimized and {0, 200, 80, 220} or {60, 60, 80, 220}
     engine.draw_rect(x, y, w, h, color)
     engine.draw_rect_outline(x, y, w, h, {255, 255, 255, 120}, 1)
     
-    -- Иконка
     if guiMinimized then
-        -- Развернуть (квадрат с плюсом или стрелка вверх)
         engine.draw_rect(x + 8, y + 14, 20, 4, {255, 255, 255, 255})
         engine.draw_rect(x + 18, y + 4, 4, 20, {255, 255, 255, 255})
     else
-        -- Свернуть (стрелка вниз или минус)
         engine.draw_rect(x + 8, y + 16, 20, 4, {255, 255, 255, 255})
     end
     
-    -- Подпись
     engine.draw_text(x + 2, y + h + 4, "MENU", {200, 200, 200, 150}, 8)
 end
 
@@ -169,50 +164,70 @@ end
 -- ===== MAIN ФУНКЦИИ =====
 function applyAspect4x3()
     if aspect4x3 then
-        engine.set_aspect_ratio(4/3)
-        engine.execute_cmd("screensize 4:3")
+        if engine.set_aspect_ratio then
+            engine.set_aspect_ratio(4/3)
+        end
+        if engine.execute_cmd then
+            engine.execute_cmd("screensize 4:3")
+        end
         print("[Ryzen] 4:3 режим включен")
     else
-        engine.set_aspect_ratio(16/9)
-        engine.execute_cmd("screensize default")
+        if engine.set_aspect_ratio then
+            engine.set_aspect_ratio(16/9)
+        end
+        if engine.execute_cmd then
+            engine.execute_cmd("screensize default")
+        end
         print("[Ryzen] 4:3 режим выключен")
     end
 end
 
 function applyFPSBoost()
     if fpsBoost then
-        engine.set_float("graphics.texture_quality", 0.1)
-        engine.set_float("graphics.shadow_quality", 0.0)
-        engine.set_float("graphics.particle_quality", 0.0)
-        engine.set_float("graphics.post_processing", 0.0)
-        engine.set_float("fog.enabled", 0.0)
-        engine.set_float("fog.density", 0.0)
-        engine.set_float("graphics.brightness", 1.5)
-        engine.set_float("graphics.gamma", 1.3)
-        engine.set_float("graphics.view_distance", 0.5)
+        if engine.set_float then
+            engine.set_float("graphics.texture_quality", 0.1)
+            engine.set_float("graphics.shadow_quality", 0.0)
+            engine.set_float("graphics.particle_quality", 0.0)
+            engine.set_float("graphics.post_processing", 0.0)
+            engine.set_float("fog.enabled", 0.0)
+            engine.set_float("fog.density", 0.0)
+            engine.set_float("graphics.brightness", 1.5)
+            engine.set_float("graphics.gamma", 1.3)
+            engine.set_float("graphics.view_distance", 0.5)
+        end
         print("[Ryzen] FPS Boost включен")
     else
-        engine.set_float("graphics.texture_quality", 1.0)
-        engine.set_float("graphics.shadow_quality", 1.0)
-        engine.set_float("graphics.particle_quality", 1.0)
-        engine.set_float("graphics.post_processing", 1.0)
-        engine.set_float("fog.enabled", 1.0)
-        engine.set_float("fog.density", 1.0)
-        engine.set_float("graphics.brightness", 1.0)
-        engine.set_float("graphics.gamma", 1.0)
-        engine.set_float("graphics.view_distance", 1.0)
+        if engine.set_float then
+            engine.set_float("graphics.texture_quality", 1.0)
+            engine.set_float("graphics.shadow_quality", 1.0)
+            engine.set_float("graphics.particle_quality", 1.0)
+            engine.set_float("graphics.post_processing", 1.0)
+            engine.set_float("fog.enabled", 1.0)
+            engine.set_float("fog.density", 1.0)
+            engine.set_float("graphics.brightness", 1.0)
+            engine.set_float("graphics.gamma", 1.0)
+            engine.set_float("graphics.view_distance", 1.0)
+        end
         print("[Ryzen] FPS Boost выключен")
     end
 end
 
 function applyGreySky()
     if greySky then
-        engine.set_color("sky", {180, 180, 180, 255})
-        engine.set_float("sky.brightness", 0.7)
+        if engine.set_color then
+            engine.set_color("sky", {180, 180, 180, 255})
+        end
+        if engine.set_float then
+            engine.set_float("sky.brightness", 0.7)
+        end
         print("[Ryzen] Серое небо включено")
     else
-        engine.set_color("sky", {135, 206, 235, 255})
-        engine.set_float("sky.brightness", 1.0)
+        if engine.set_color then
+            engine.set_color("sky", {135, 206, 235, 255})
+        end
+        if engine.set_float then
+            engine.set_float("sky.brightness", 1.0)
+        end
         print("[Ryzen] Серое небо выключено")
     end
 end
@@ -330,7 +345,6 @@ function drawGUI()
     if not guiOpen then return end
     
     if guiMinimized then
-        -- Свернутое состояние — показываем только кнопку разворачивания
         drawMinimizeButton()
         return
     end
@@ -344,7 +358,6 @@ function drawGUI()
     engine.draw_rect(panelX, panelY, panelW, panelH, {16, 18, 28, 240})
     engine.draw_rect_outline(panelX, panelY, panelW, panelH, {0, 180, 255, 200}, 2)
     
-    -- Кнопка сворачивания в углу панели
     local minX = panelX + panelW - 45
     local minY = panelY + 5
     local minW = 35
@@ -370,7 +383,6 @@ function drawGUI()
     local spacing = 40
     local btnH = 32
     
-    -- MAIN
     if currentTab == "main" then
         local yOff = 30
         engine.draw_text(contentX, contentY + yOff - 20, "⚙️ Main Functions", {200, 200, 255, 220}, 15)
@@ -384,7 +396,6 @@ function drawGUI()
         drawToggle(contentX, contentY, contentW, btnH, greySky, "🌥️ Grey Sky", yOff)
     end
     
-    -- SURVIVOR
     if currentTab == "survivor" then
         local yOff = 30
         engine.draw_text(contentX, contentY + yOff - 20, "🛡️ Survivor Modules", {200, 200, 255, 220}, 15)
@@ -400,7 +411,6 @@ function drawGUI()
         engine.draw_text(contentX + 80, contentY + yOff + 8, "▶ EXECUTE BACKSTAB", backstabEnabled and {255, 255, 255, 255} or {150, 150, 150, 150}, 13)
     end
     
-    -- ESP
     if currentTab == "esp" then
         local yOff = 30
         engine.draw_text(contentX, contentY + yOff - 20, "👁️ ESP Modules", {200, 200, 255, 220}, 15)
@@ -431,7 +441,6 @@ end
 
 -- ===== ОБРАБОТЧИК КЛИКОВ =====
 function handleGUIClick(x, y)
-    -- Сначала проверяем кнопку сворачивания
     if isOnMinimizeButton(x, y) then
         if guiOpen then
             guiMinimized = not guiMinimized
@@ -452,7 +461,6 @@ function handleGUIClick(x, y)
         return false
     end
     
-    -- Вкладки
     local tabs = {
         {id = "main", x = 10},
         {id = "survivor", x = 90},
@@ -531,10 +539,4 @@ function handleGUIClick(x, y)
         ty = contentY + yOff + (btnH - toggleH) / 2
         if isOnToggle(x, y, tx, ty, toggleW, toggleH) then
             mobileButton.visible = not mobileButton.visible
-            if mobileButton.visible then initMobileButton() end
-            print("[Ryzen] Mobile: " .. (mobileButton.visible and "ON" or "OFF"))
-            return true
-        end
-        yOff = yOff + spacing
-        
-        
+            if
